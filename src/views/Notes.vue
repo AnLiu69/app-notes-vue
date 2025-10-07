@@ -1,10 +1,15 @@
 <script setup>
+import { onMounted } from 'vue';
 import CreateNote from '../components/CreateNote.vue';
 import HeaderComponent from '../components/HeaderComponent.vue';
 import NoteCard from '../components/NoteCard.vue';
 import { useNoteStore } from '../stores/note';
 
     const noteStore = useNoteStore();
+
+    onMounted( async () => {
+        await noteStore.getNotes();
+    })
 </script>
 
 <template>
@@ -13,7 +18,9 @@ import { useNoteStore } from '../stores/note';
     <section id="notes-page">
         <h2>Notes</h2>
 
-        <ul class="note-list">
+        <h2 v-if="noteStore.loading">Cargando...</h2>
+        <h2 v-else-if="noteStore.error">Algo ha ido mal</h2>
+        <ul v-else class="note-list">
             <li><CreateNote/></li>
             <li v-for="note in noteStore.notes" :key="noteStore.id">
                 <NoteCard :note="note"></NoteCard>
